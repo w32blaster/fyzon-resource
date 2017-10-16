@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -e
+
+# Colors
+RED='\033[1;31m'
+NC='\033[0m' # No Color
+
+exec 3>&1
+exec 1>&2
+
+# for jq
+PATH=/usr/local/bin:$PATH
+
+#
+# Get parameters from the pipeline
+#
+payload=$(mktemp /tmp/resource-in.XXXXXX)
+echo "PAYLOAD: $payload"
+(>&2 echo "error olol")
+
+cat > "$payload" <&0
+
+FYZON_URL=$(jq -r '(.source.url // "http://localhost:8080")' < "$payload")
+PROJECT_ID="$(jq '(.params.project_id // "1")' < "${payload}")"
+COUNTRIES="$(jq '(.params.countries)' < "${payload}")"
+
+#
+# Send the message to the Telegram
+#
+echo "--- DEBUG"
+url="$(eval printf ${FYZON_URL} )"
+echo URL
+
+proj="$(eval printf ${PROJECT_ID} )"
+echo proj
+
+coun="$(eval printf ${COUNTRIES} )"
+echo cout
+
+
+
