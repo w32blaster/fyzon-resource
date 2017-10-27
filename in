@@ -2,12 +2,9 @@
 
 set -e
 
-# Colors
-RED='\033[1;31m'
-NC='\033[0m' # No Color
 
-exec 3>&1
-exec 1>&2
+exec 3>&1 # make stdout available as fd 3 for the result
+exec 1>&2 # redirect all output to stderr for logging
 
 # for jq
 PATH=/usr/local/bin:$PATH
@@ -16,27 +13,40 @@ PATH=/usr/local/bin:$PATH
 # Get parameters from the pipeline
 #
 payload=$(mktemp /tmp/resource-in.XXXXXX)
-echo "PAYLOAD: $payload"
-(>&2 echo "error olol")
 
+# read the payload from the input file
 cat > "$payload" <&0
 
-FYZON_URL=$(jq -r '(.source.url // "http://localhost:8080")' < "$payload")
+# parse payload JSON and extract properties
+FYZON_URL=$(jq '(.source.url // "http://localhost:8080" )' < "$payload")
 PROJECT_ID="$(jq '(.params.project_id // "1")' < "${payload}")"
-COUNTRIES="$(jq '(.params.countries)' < "${payload}")"
+COUNTRIES="$(jq -r '(.params.countries)' < "${payload}")"
+FORMAT=="$(jq '(.params.format)' < "${payload}")"
 
-#
-# Send the message to the Telegram
-#
-echo "--- DEBUG"
-url="$(eval printf ${FYZON_URL} )"
-echo URL
+[ -z "$COUNTRIES" ] && COUNTRIES='[]'
+[ -z "$FORMAT" ] && FORMAT='properties'
 
-proj="$(eval printf ${PROJECT_ID} )"
-echo proj
+# Now, download the latest translations
+cd "$1"
+{
+  echo "Ok, data are"
+  cat "$payload"
+  echo $FYZON_URL
+  echo $PROJECT_ID
+  echo "$COUNTRIES"
+} >> out.txt
 
-coun="$(eval printf ${COUNTRIES} )"
-echo cout
+
+for i in "${COUNTRIES[@]}"
+do
+    echo $i >> out.txt
+done
 
 
+# ...and make a JSON to be passed as a resource output
+jq -n "{
+  version: {
+    url: $FYZON_URL
+  }
+}" >&3
 
