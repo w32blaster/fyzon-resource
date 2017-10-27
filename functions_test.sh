@@ -29,5 +29,17 @@ testProjectIdExtracted() {
     assertEquals 303 $projectId
 }
 
+#
+# Test that the Format is correctly extracted
+#
+testFormatExtracted() {
+
+    # When:
+    extractedFormat=`extractFormat "$PAYLOAD"`
+
+    # Then
+    assertEquals "json" $extractedFormat
+}
+
 # Load and run shUnit2.
 . shunit2

@@ -17,11 +17,15 @@ payload=$(mktemp /tmp/resource-in.XXXXXX)
 # read the payload from the input file
 cat > "$payload" <&0
 
+# use our functions
+source ./functions.sh
+
 # parse payload JSON and extract properties
-FYZON_URL=$(jq '(.source.url // "http://localhost:8080" )' < "$payload")
-PROJECT_ID="$(jq '(.params.project_id // "1")' < "${payload}")"
+FYZON_URL=`extractUrl "$payload"`
+PROJECT_ID=`extractProjectId "$payload"`
+FORMAT=`extractFormat "$PAYLOAD"`
+
 COUNTRIES="$(jq -r '(.params.countries)' < "${payload}")"
-FORMAT=="$(jq '(.params.format)' < "${payload}")"
 
 [ -z "$COUNTRIES" ] && COUNTRIES='[]'
 [ -z "$FORMAT" ] && FORMAT='properties'
