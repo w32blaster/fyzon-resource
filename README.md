@@ -32,10 +32,11 @@ jobs:
     - get: fyzon
       params:
         project_id: 3
-        format: json
+        format: properties
+        delimeter: ":"
         countries:
-          - gb: en-gb.all.json
-          - ru: ru-ru.all.json
+          - gb: messages-en.properties
+          - ru: messages-ru.properties
 
     # Build
     - task: "Task to deonstrate how to consume translation files"

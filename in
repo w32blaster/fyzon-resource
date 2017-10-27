@@ -23,27 +23,32 @@ source ./functions.sh
 # parse payload JSON and extract properties
 FYZON_URL=`extractUrl "$payload"`
 PROJECT_ID=`extractProjectId "$payload"`
-FORMAT=`extractFormat "$PAYLOAD"`
+FORMAT=`extractFormat "$payload"`
+DELIMETER=`extractDelimeter "$payload"`
 
-COUNTRIES="$(jq -r '(.params.countries)' < "${payload}")"
+COUNTRIES=`extractCountries "$payload"`
+arrCountries=($COUNTRIES)
 
-[ -z "$COUNTRIES" ] && COUNTRIES='[]'
-[ -z "$FORMAT" ] && FORMAT='properties'
-
-# Now, download the latest translations
+# Write debug file
 cd "$1"
 {
-  echo "Ok, data are"
+  echo "Parsed values"
   cat "$payload"
   echo $FYZON_URL
   echo $PROJECT_ID
-  echo "$COUNTRIES"
-} >> out.txt
+  echo $FORMAT
+  echo "$COUNTRIES[@]"
+} >> debug.txt
 
 
+# And now, download all the files
 for i in "${COUNTRIES[@]}"
 do
-    echo $i >> out.txt
+    fileName=`${i##*|}`
+    urlDownloadFile=`buildUrlToFile "$i" "$FORMAT" "$PROJECT_ID" "$FYZON_URL" "$DELIMETER"`
+    
+    # and download
+    curl $urlDownloadFile > fileName
 done
 
 

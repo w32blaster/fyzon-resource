@@ -1,1 +1,1 @@
-{"source":{"url":"http://ci.myhost:8083"},"params":{"countries":[{"gb":"en-gb.all.json"},{"ru":"ru-ru.all.json"}],"format":"json","project_id":303},"version":{"ref":"61cbef"}}
+{"source":{"url":"http://ci.myhost:8083"},"params":{"countries":[{"gb":"en-gb.all.json"},{"ru":"ru-ru.all.json"},{"cy":"cy-cy.all.json"}],"format":"json","project_id":303},"version":{"ref":"61cbef"}}
