@@ -68,11 +68,10 @@ function buildUrlToFile() {
     # extract the first part of the line before "|"
     country="${1%|*}"
 
-    #delimeter=[ -z "$FORMAT" ] && FORMAT='properties'
-    if [ -n "$5" ]; then
-        delimeterArg="?delimeter=$5"
-    else
+    if [ -z "$5" ] || [ "$5" == "null" ]; then
         delimeterArg=""
+    else
+        delimeterArg="?delimeter=$5"
     fi
 
     echo "$4/api/project/$3/file/$country/$2$delimeterArg"

@@ -87,6 +87,47 @@ testBuildUrlSimple() {
 }
 
 #
+# Empty delimeter ignored
+#
+testBuildUrlSimpleEmptyDelimenter() {
+
+    # Given:
+    LINE="gb|en-gb.all.json"
+    FORMAT="json"
+    PROJECT_ID=3
+    BASE_URL="http://localhost:8080"
+
+    # and:
+    DELIMETER="" # <-- will be ignored
+
+    # When
+    url=`buildUrlToFile "$LINE" "$FORMAT" "$PROJECT_ID" "$BASE_URL" "$DELIMETER"`
+
+    # Then
+    assertEquals "http://localhost:8080/api/project/3/file/gb/json" "$url"
+}
+
+#
+# Empty delimeter ignored
+#
+testBuildUrlSimpleNullDelimenter() {
+
+    # Given:
+    LINE="gb|en-gb.all.json"
+    FORMAT="json"
+    PROJECT_ID=3
+    BASE_URL="http://localhost:8080"
+    DELIMETER=null
+    
+    # When
+    url=`buildUrlToFile "$LINE" "$FORMAT" "$PROJECT_ID" "$BASE_URL" "$DELIMETER"`
+
+    # Then
+    assertEquals "http://localhost:8080/api/project/3/file/gb/json" "$url"
+}
+
+
+#
 # Test that URL is correctly build, including optional parameter "delimeter"
 #
 testBuildUrlWithDelimeter() {

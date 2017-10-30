@@ -21,42 +21,31 @@ PAYLOAD_CONTENT=$(<$payload)
 # use our functions
 source /opt/resource/functions.sh
 
+#
 # parse payload JSON and extract properties,
 # please refer to unit tests for comments
+#
 FYZON_URL=`extractUrl "$PAYLOAD_CONTENT"`
 PROJECT_ID=`extractProjectId "$PAYLOAD_CONTENT"`
 FORMAT=`extractFormat "$PAYLOAD_CONTENT"`
 DELIMETER=`extractDelimeter "$PAYLOAD_CONTENT"`
 COUNTRIES=`extractCountries "$PAYLOAD_CONTENT"`
-arrCountries=($COUNTRIES)
 
+# navigate to output folder
 cd "$1"
 
-# Write debug file
-{
-  echo "Parsed values"
-  cat "$payload"
-  echo "URL: $FYZON_URL"
-  echo "ProjectID: $PROJECT_ID"
-  echo "Format: $FORMAT"
-  echo "$COUNTRIES[@]"
-} >> debug.txt
-
-
-# And now, download all the files
-for i in "${arrCountries[@]}"
+# And now, download all the requested files
+arrCountries=($COUNTRIES)
+for country in "${arrCountries[@]}"
 do
     
-    echo "Country: $i"
-
-    fileName="${i##*|}"
-    echo "File name: $fileName"
-
-    urlDownloadFile=`buildUrlToFile "$i" "$FORMAT" "$PROJECT_ID" "$FYZON_URL" "$DELIMETER"`
-    echo "URL to download: $urlDownloadFile"
-
+    fileName="${country##*|}"
+    urlDownloadFile=`buildUrlToFile "$country" "$FORMAT" "$PROJECT_ID" "$FYZON_URL" "$DELIMETER"`
+    
     # and download
-    curl "$urlDownloadFile" > $fileName
+    echo "Download $fileName file from Fyzon by URL: $urlDownloadFile"
+    curl -s "$urlDownloadFile" > "$fileName"
+
 done
 
 
