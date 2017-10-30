@@ -21,7 +21,7 @@ function extractUrl() {
 #
 #
 function extractProjectId() {
-    project_id=$(echo "$1" | jq -r '(.params.project_id // 1)')
+    project_id=$(echo "$1" | jq -r '(.params.project_id)')
     echo $project_id
 }
 
@@ -38,7 +38,7 @@ function extractDelimeter() {
 # Extract format for the exported data
 #
 function extractFormat() {
-    exportFormat=$(echo "$1" | jq -r '(.params.format // "json")')
+    exportFormat=$(echo "$1" | jq -r '(.params.format)')
     echo $exportFormat
 }
 

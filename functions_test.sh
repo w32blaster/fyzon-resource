@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# load testing payload
+# load testing payload from the testing file
 PAYLOAD=$(<payload.json)
 source ./functions.sh
 
@@ -51,6 +51,7 @@ testArrayCountries() {
     # When:
     countries=`extractCountries "$PAYLOAD"`
     arrCountries=($countries)
+
    
     # Then:
     assertEquals "gb|en-gb.all.json" ${arrCountries[0]}

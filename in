@@ -16,46 +16,54 @@ payload=$(mktemp /tmp/resource-in.XXXXXX)
 
 # read the payload from the input file
 cat > "$payload" <&0
+PAYLOAD_CONTENT=$(<$payload)
 
 # use our functions
-source ./functions.sh
+source /opt/resource/functions.sh
 
-# parse payload JSON and extract properties
-FYZON_URL=`extractUrl "$payload"`
-PROJECT_ID=`extractProjectId "$payload"`
-FORMAT=`extractFormat "$payload"`
-DELIMETER=`extractDelimeter "$payload"`
-
-COUNTRIES=`extractCountries "$payload"`
+# parse payload JSON and extract properties,
+# please refer to unit tests for comments
+FYZON_URL=`extractUrl "$PAYLOAD_CONTENT"`
+PROJECT_ID=`extractProjectId "$PAYLOAD_CONTENT"`
+FORMAT=`extractFormat "$PAYLOAD_CONTENT"`
+DELIMETER=`extractDelimeter "$PAYLOAD_CONTENT"`
+COUNTRIES=`extractCountries "$PAYLOAD_CONTENT"`
 arrCountries=($COUNTRIES)
 
-# Write debug file
 cd "$1"
+
+# Write debug file
 {
   echo "Parsed values"
   cat "$payload"
-  echo $FYZON_URL
-  echo $PROJECT_ID
-  echo $FORMAT
+  echo "URL: $FYZON_URL"
+  echo "ProjectID: $PROJECT_ID"
+  echo "Format: $FORMAT"
   echo "$COUNTRIES[@]"
 } >> debug.txt
 
 
 # And now, download all the files
-for i in "${COUNTRIES[@]}"
+for i in "${arrCountries[@]}"
 do
-    fileName=`${i##*|}`
-    urlDownloadFile=`buildUrlToFile "$i" "$FORMAT" "$PROJECT_ID" "$FYZON_URL" "$DELIMETER"`
     
+    echo "Country: $i"
+
+    fileName="${i##*|}"
+    echo "File name: $fileName"
+
+    urlDownloadFile=`buildUrlToFile "$i" "$FORMAT" "$PROJECT_ID" "$FYZON_URL" "$DELIMETER"`
+    echo "URL to download: $urlDownloadFile"
+
     # and download
-    curl $urlDownloadFile > fileName
+    curl "$urlDownloadFile" > $fileName
 done
 
 
 # ...and make a JSON to be passed as a resource output
 jq -n "{
-  version: {
-    url: $FYZON_URL
+  \"version\": {
+    \"url\": \"$FYZON_URL\"
   }
 }" >&3
 
