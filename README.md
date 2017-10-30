@@ -2,6 +2,7 @@
 
 The resource to get [Fyzon translations](https://github.com/w32blaster/fyzon) inside your [ConcourseCI](http://concourse.ci/) pipeline.
 
+![Fyzon resource ConcourseCI Screenshot](https://raw.githubusercontent.com/w32blaster/fyzon-resource/master/img/screenshot1.jpg)
 
 ## Use the resource
 
