@@ -16,7 +16,7 @@ resource_types:
 - name: fyzon-resource
   type: docker-image
   source:
-    repository: <here will be public repo name, TODO>
+    repository: w32blaster/fyzon-resource
     
 # declare resource
 resources:
@@ -57,7 +57,8 @@ jobs:
           - |
             
             ls fyzon        
-            # ... here you will find two files: en-gb.all.json and ru-ru.all.json
+            # ... here you will find two files: 
+            # "messages-en.properties" and "messages-ru.properties"
             # copy them to the destination folder
 
 ```
